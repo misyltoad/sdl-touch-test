@@ -104,15 +104,30 @@ int main(int argc, char* argv[])
             // Event loop
             while(!quit)
             {
-                SDL_Event e;
-
                 // Wait indefinitely for the next available event
-                SDL_WaitEvent(&e);
 
-                // User requests quit
-                if(e.type == SDL_QUIT)
+                static int lastEvent = 0;
+
+                SDL_Event e;
+                while (SDL_PollEvent(&e))
                 {
-                    quit = true;
+                    // User requests quit
+                    if(e.type == SDL_QUIT)
+                    {
+                        quit = true;
+                    }
+
+                    if (e.type == SDL_MOUSEBUTTONDOWN)
+                    {
+                        printf("Mouse down!");
+                        lastEvent = 1;
+                    }
+
+                    if (e.type == SDL_FINGERDOWN)
+                    {
+                        printf("touch down!");
+                        lastEvent = 2;
+                    }
                 }
 
                 // Initialize renderer color white for the background
@@ -122,7 +137,7 @@ int main(int argc, char* argv[])
                 SDL_RenderClear(renderer);
 
                 // Set renderer color red to draw the square
-                SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
+                SDL_SetRenderDrawColor(renderer, 0xFF, lastEvent >= 1 ? 0xFF : 0x00, lastEvent >= 2 ? 0xFF : 0x00, 0xFF);
 
                 // Draw filled square
                 SDL_RenderFillRect(renderer, &squareRect);
